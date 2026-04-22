@@ -1,13 +1,13 @@
 // ════════════════════════════════════════════════════════════
-//  RECRUITING MAIL MERGE — FULL SCRIPT (AI-POWERED)
+//  RECRUITING MAIL MERGE — FULL SCRIPT (AI-POWERED) v6
 //  Config sheet  →  Drive Folder (Google Doc email structure)
 //              →  Drive Folder (CV PDF — attached + text extracted)
 //              →  Claude AI (generates personalised email per HR)
 //              →  Gmail (sends personalised email + CV attached)
 // ════════════════════════════════════════════════════════════
 //
-//  CONFIG SHEET KEYS (Column A → Column B):
-//  ─────────────────────────────────────────
+//  CONFIG SHEET ("Config-enter your details here") KEYS:
+//  ──────────────────────────────────────────────────────
 //  YOUR_NAME           → Ankush Kumar Bawa
 //  YOUR_PHONE          → 76966-67410
 //  YOUR_LINKEDIN       → your-linkedin-url
@@ -21,7 +21,8 @@
 //  HR DATA SHEET ("test") COLUMNS:
 //  ────────────────────────────────
 //  Sr_no(0) | HR_name(1) | Company(2) | email(3) | LinkedIn(4)
-//  Contact_No(5) | Personal_Email(6) | Location(7) | Domain(8) | Roles(9) | Status(10)
+//  Contact_No(5) | Personal_Email(6) | Location(7) | Domain(8)
+//  Roles(9) | Designation(10) | Status(11)
 //
 //  BEFORE RUNNING:
 //  ───────────────
@@ -129,7 +130,6 @@ function getDocBody(folderId) {
 
           if (text.length === 0) continue;
 
-          // Walk character by character to handle mixed formatting runs
           let currentTag  = "";
           let currentText = "";
 
@@ -228,6 +228,7 @@ You are writing a high-conversion cold recruiting email on behalf of ${cfg.YOUR_
 
 Recipient details:
 - HR Name: ${hrData.name}
+- Designation: ${hrData.designation}
 - Company: ${hrData.company}
 - Domain: ${hrData.domain}
 - Roles they are currently hiring for: ${hrData.roles}
@@ -239,22 +240,25 @@ ${cvText}
 Write a highly personalised, professional cold email that follows these STRICT guidelines:
 
 1. Opens with a warm, natural greeting addressing the HR by name
-2. Mentions the company and its domain organically (avoid generic or forced praise)
-3. Clearly aligns the sender’s profile with the roles they are hiring for
-4. Extracts and highlights ONLY the most relevant skills, experiences, and achievements from the CV (do not list everything)
-5. Demonstrates value in a crisp, specific way (avoid vague claims like “hardworking” or “passionate”)
-6. Keeps the tone confident, respectful, and non-desperate
-7. Includes a clear but soft call-to-action (e.g., requesting guidance or a short conversation — NOT directly asking for a job)
-8. Keeps the email concise (150–180 words ideal, 200 words max)
-9. Uses short paragraphs for readability
-10. Avoids clichés, fluff, and mass-email tone — it should feel genuinely written for this specific HR
-
-11. Bullet Points Rule:
-   - Use bullet points ONLY if they improve clarity and readability
-   - Maximum 2–3 bullet points
-   - Each point must highlight a strong, relevant achievement or skill
-   - Do NOT replicate the full CV or create a long list
-   - The email must still feel conversational, not like a resume dump
+2. Subtly acknowledges their seniority and designation — tailor the tone accordingly:
+   - For senior designations (MD, CEO, Director, Zonal Head, Executive Director): tone should be more formal, respectful, and strategic — focus on business impact and leadership potential
+   - For mid-level designations (HR Executive, Talent Acquisition, Regional HR): tone can be slightly warmer and more direct — focus on role fit and skills
+   - For technical/specialised hiring (Tech & Leadership Talent, Medical Hiring): highlight only the most relevant domain-specific experience from the CV
+3. Mentions the company and its domain organically (avoid generic or forced praise)
+4. Clearly aligns the sender's profile with the roles they are hiring for
+5. Extracts and highlights ONLY the most relevant skills, experiences, and achievements from the CV (do not list everything)
+6. Demonstrates value in a crisp, specific way (avoid vague claims like "hardworking" or "passionate")
+7. Keeps the tone confident, respectful, and non-desperate
+8. Includes a clear but soft call-to-action (e.g., requesting guidance or a short conversation — NOT directly asking for a job)
+9. Keeps the email concise (150–180 words ideal, 200 words max)
+10. Uses short paragraphs for readability
+11. Avoids clichés, fluff, and mass-email tone — it should feel genuinely written for this specific person
+12. Bullet Points Rule:
+    - Use bullet points ONLY if they improve clarity and readability
+    - Maximum 2–3 bullet points
+    - Each point must highlight a strong, relevant achievement or skill
+    - Do NOT replicate the full CV or create a long list
+    - The email must still feel conversational, not like a resume dump
 
 End with a professional sign-off including:
 - Name
@@ -300,35 +304,35 @@ function sendRecruitingEmails() {
   // Step 1: Load config
   const cfg = getConfig();
 
-  // Step 2: Fetch email subject template from Doc
-  const subjectTemplate = cfg["Email_Subject"];
-
-  // Step 3: Fetch CV blob (for attachment) and CV text (for AI prompt)
+  // Step 2: Fetch CV blob (for attachment) and CV text (for AI prompt)
+  // Both are fetched once before the loop — not per row
   const cvBlob = getCVBlob(cfg["CV_Folder_ID"]);
   const cvText = extractCVText(cfg["CV_Folder_ID"]);
 
-  // Step 4: Load HR data sheet
+  // Step 3: Load HR data sheet
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("test");
   if (!sheet) throw new Error("No sheet named 'test' found! Please check the sheet name.");
   const data = sheet.getDataRange().getValues();
 
   // Column indexes
   // Sr_no(0) | HR_name(1) | Company(2) | email(3) | LinkedIn(4)
-  // Contact_No(5) | Personal_Email(6) | Location(7) | Domain(8) | Roles(9) | Status(10)
-  const COL_NAME     = 1;
-  const COL_COMPANY  = 2;
-  const COL_EMAIL    = 3;
-  const COL_LINKEDIN = 4;
-  const COL_CONTACT  = 5;
-  const COL_PERSONAL = 6;
-  const COL_LOCATION = 7;
-  const COL_DOMAIN   = 8;
-  const COL_ROLES    = 9;
-  const COL_STATUS   = 10;
+  // Contact_No(5) | Personal_Email(6) | Location(7) | Domain(8)
+  // Roles(9) | Designation(10) | Status(11)
+  const COL_NAME        = 1;
+  const COL_COMPANY     = 2;
+  const COL_EMAIL       = 3;
+  const COL_LINKEDIN    = 4;
+  const COL_CONTACT     = 5;
+  const COL_PERSONAL    = 6;
+  const COL_LOCATION    = 7;
+  const COL_DOMAIN      = 8;
+  const COL_ROLES       = 9;
+  const COL_DESIGNATION = 10;
+  const COL_STATUS      = 11;
 
   let sentCount = 0, skippedCount = 0, failedCount = 0;
 
-  // Step 5: Loop through each row
+  // Step 4: Loop through each row
   for (let i = 1; i < data.length; i++) {
     const row    = data[i];
     const email  = row[COL_EMAIL];
@@ -340,7 +344,7 @@ function sendRecruitingEmails() {
       continue;
     }
 
-    // Build values object for subject template
+    // Build values object for subject line template
     const values = {
       ...cfg,
       HR_name:        row[COL_NAME],
@@ -352,18 +356,20 @@ function sendRecruitingEmails() {
       Location:       row[COL_LOCATION],
       domain:         row[COL_DOMAIN],
       roles:          row[COL_ROLES],
+      designation:    row[COL_DESIGNATION],
     };
 
-    const subject = fillTemplate(subjectTemplate, values);
+    const subject = fillTemplate(cfg["Email_Subject"], values);
 
     try {
-      // Generate AI-personalised email body for this HR
+      // Generate AI-personalised email body for this specific HR
       const body = generatePersonalisedEmail({
-        name:     row[COL_NAME],
-        company:  row[COL_COMPANY],
-        domain:   row[COL_DOMAIN],
-        roles:    row[COL_ROLES],
-        location: row[COL_LOCATION]
+        name:        row[COL_NAME],
+        company:     row[COL_COMPANY],
+        domain:      row[COL_DOMAIN],
+        roles:       row[COL_ROLES],
+        location:    row[COL_LOCATION],
+        designation: row[COL_DESIGNATION]
       }, cvText, cfg);
 
       GmailApp.sendEmail(email, subject, "", {
@@ -387,7 +393,7 @@ function sendRecruitingEmails() {
     }
   }
 
-  // Step 6: Log summary
+  // Step 5: Log summary (visible in Apps Script → Execution Log)
   Logger.log(`✅ Done! Sent: ${sentCount} | Skipped: ${skippedCount} | Failed: ${failedCount}`);
 }
 
