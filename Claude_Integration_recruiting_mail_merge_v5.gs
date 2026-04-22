@@ -224,7 +224,7 @@ function extractCVText(folderId) {
 // ── SECTION 7: Generate personalised email via Claude AI ──────
 function generatePersonalisedEmail(hrData, cvText, cfg) {
   const prompt = `
-You are writing a cold recruiting email on behalf of ${cfg.YOUR_NAME}, an MBA student at ${cfg.YOUR_COLLEGE} (Batch ${cfg.YOUR_BATCH}).
+You are writing a high-conversion cold recruiting email on behalf of ${cfg.YOUR_NAME}, an MBA student at ${cfg.YOUR_COLLEGE} (Batch ${cfg.YOUR_BATCH}).
 
 Recipient details:
 - HR Name: ${hrData.name}
@@ -236,17 +236,37 @@ Recipient details:
 Sender's CV (full text):
 ${cvText}
 
-Write a highly personalised, professional cold email that:
-1. Opens by addressing the HR by name warmly
-2. Mentions the company name and domain naturally — not forced
-3. Identifies the most relevant experience, skills, and achievements from the CV that match the roles they are hiring for, and highlights them specifically
-4. Feels genuinely hand-written and tailored — not a bulk template
-5. Is concise — 150 to 200 words maximum
-6. Ends with a clear, polite call to action (e.g. a 15-minute call)
-7. Signs off with the sender's name, college, batch, phone, and LinkedIn
+Write a highly personalised, professional cold email that follows these STRICT guidelines:
 
-Return only the email body as clean HTML (use <p>, <b>, <br> tags only).
-Do not include a subject line. Do not include any preamble or explanation.
+1. Opens with a warm, natural greeting addressing the HR by name
+2. Mentions the company and its domain organically (avoid generic or forced praise)
+3. Clearly aligns the sender’s profile with the roles they are hiring for
+4. Extracts and highlights ONLY the most relevant skills, experiences, and achievements from the CV (do not list everything)
+5. Demonstrates value in a crisp, specific way (avoid vague claims like “hardworking” or “passionate”)
+6. Keeps the tone confident, respectful, and non-desperate
+7. Includes a clear but soft call-to-action (e.g., requesting guidance or a short conversation — NOT directly asking for a job)
+8. Keeps the email concise (150–180 words ideal, 200 words max)
+9. Uses short paragraphs for readability
+10. Avoids clichés, fluff, and mass-email tone — it should feel genuinely written for this specific HR
+
+11. Bullet Points Rule:
+   - Use bullet points ONLY if they improve clarity and readability
+   - Maximum 2–3 bullet points
+   - Each point must highlight a strong, relevant achievement or skill
+   - Do NOT replicate the full CV or create a long list
+   - The email must still feel conversational, not like a resume dump
+
+End with a professional sign-off including:
+- Name
+- College and batch
+- Phone number
+- LinkedIn profile
+
+Return ONLY the email body as clean HTML using <p>, <b>, and <br> tags.
+Do NOT include:
+- Subject line
+- Any explanation or meta text
+- Placeholder text (everything should feel real and filled)
 `;
 
   const response = UrlFetchApp.fetch("https://api.anthropic.com/v1/messages", {
