@@ -408,7 +408,6 @@ function enrichDomainAndRoles() {
 
   const summary = `Enriched: ${enrichedCount} | Skipped: ${skippedCount} | Failed: ${failedCount}`;
   Logger.log(`✅ Enrichment complete! ${summary}`);
-  SpreadsheetApp.getUi().alert(`✅ Enrichment complete!\n${summary}`);
   return summary;
 }
 
@@ -454,7 +453,7 @@ Return ONLY a valid JSON object — no markdown, no explanation, nothing else:
 {"domain":"<domain>","roles":["<role1>","<role2>","<role3>","<role4>","<role5>"],"roleLocation":"<cities>"}`;
 
   const payload = {
-    model:      "claude-sonnet-4-20250514",
+    model:      "claude-haiku-4-5-20251001",
     max_tokens: 1024,
     system:     systemPrompt,
     tools: [
@@ -471,6 +470,7 @@ Return ONLY a valid JSON object — no markdown, no explanation, nothing else:
     headers: {
       "x-api-key":         apiKey,
       "anthropic-version": "2023-06-01",
+      "anthropic-beta":    "web-search-2025-03-05",
       "content-type":      "application/json"
     },
     payload:            JSON.stringify(payload),
@@ -1271,4 +1271,3 @@ function getSidebarHtml() {
 </body>
 </html>`;
 }
-
